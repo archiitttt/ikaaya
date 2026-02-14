@@ -8,7 +8,7 @@ const productValidation = (req, res, next)=>{
         description : Joi.string().required(),
         price : Joi.number().min(0).required(),
         category : Joi.string().valid("Bracelet", "Necklace", "Keycharm", "Ring", "Earring").required(),
-        images : Joi.string().required(),
+        image: Joi.object({url: Joi.string().uri().optional(),public_id: Joi.string().optional()}).optional(),
         stock : Joi.number().min(0).required(),
         isActive : Joi.boolean().default(true)
     });

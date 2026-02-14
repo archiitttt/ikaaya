@@ -4,10 +4,10 @@ const { createProduct, destroyProduct, updateProduct } = require('../../Controll
 const { productValidation } = require('../../Validators/productValidator');
 
 router.route('/')
-.post(productValidation, createProduct)
+.post(upload.single('image'), productValidation, createProduct)
 
 router.route('/:id')
 .delete(destroyProduct)
-.put(productValidation, upload.single('image'), updateProduct)
+.put(upload.single('image'), productValidation, updateProduct)
 
 module.exports = router;

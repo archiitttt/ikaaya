@@ -6,14 +6,20 @@ const mongoose = require('mongoose');
 const { deleteFromCloudinary } = require('../Utils/cloudinaryDelete');
 
 module.exports.createProduct = wrapAsync(async (req, res)=>{
-    const {name, description, price, category, image, stock} = req.body;
+    const {name, description, price, category, stock} = req.body;
 
     const existingProduct = await Product.findOne({name});
     if(existingProduct){
         throw new ExpressError('A product with this name already exists', StatusCodes.CONFLICT);
     }
 
-    const product = new Product({name, description, price, category, image, stock});
+    const product = new Product({name, description, price,
+        category : category.toLowerCase(),
+        image : {
+            url: req.file.url,
+            public_id: req.file.public_id
+        },
+        stock});
     const savedProduct = await product.save();
 
     res.status(StatusCodes.CREATED).json({
@@ -127,7 +133,7 @@ module.exports.updateProduct = wrapAsync(async (req, res) => {
   product.name = name;
   product.description = description;
   product.price = price;
-  product.category = category;
+  product.category = category.toLowerCase();
   product.stock = stock;
   product.isActive = isActive;
 

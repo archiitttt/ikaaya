@@ -45,10 +45,12 @@ export default function Footer() {
           </h3>
 
           <div className="flex justify-center items-center gap-5 text-xl text-pink-600">
-            <FontAwesomeIcon
-              icon={["fab", "instagram"]}
-              className="cursor-pointer transition-transform duration-200 hover:scale-105"
-            />
+            <a href="https://www.instagram.com/ikaaya.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+              <FontAwesomeIcon
+                icon={["fab", "instagram"]}
+                className="cursor-pointer transition-transform duration-200 hover:scale-105"
+              />
+            </a>
           </div>
         </div>
 

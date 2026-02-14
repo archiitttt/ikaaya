@@ -7,3 +7,15 @@ export const updateProduct = (id, formData)=>{
         }
     });
 }
+
+export const deleteProduct = (id)=>{
+    return api.delete(`/admin/products/${id}`);
+}
+
+export const createProduct = (formData)=>{
+    return api.post(`/admin/products`, formData, {
+        headers: {
+        "Content-Type": "multipart/form-data"
+        }
+    })
+}

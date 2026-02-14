@@ -12,6 +12,7 @@ import ProductDetails from "./Pages/ProductDetails";
 import AdminLayout from "./Components/admin/AdminLayout";
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import AdminProductPage from "./Pages/Admin/AdminProductPage";
+import AdminCreateProduct from "./Pages/Admin/AdminCreateProduct";
 import AdminProductDetailPAge from "./Pages/Admin/AdminProductDetailPage";
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard/>}/>
           <Route path="/admin/products" element={<AdminProductPage/>}/>
           <Route path="/admin/products/:id" element={<AdminProductDetailPAge/>}/>
+          <Route path="/admin/products/create" element={<AdminCreateProduct/>}/>
       </Route>
 
     </Routes>

@@ -1,34 +1,22 @@
-import { useParams } from "react-router-dom";
-import { getProductDetails } from "../../Services/productService";
-import { deleteProduct, updateProduct } from "../../Services/Admin/adminProductService";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify"; 
+import { createProduct } from "../../Services/Admin/adminProductService";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function AdminProductDetailPage() {
 
   const navigate = useNavigate();
 
-  const { id } = useParams();
-  const [prod, setProd] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [prod, setProd] = useState({
+    name : '',
+    price : 0,
+    category : 'Bracelet',
+    description : '',
+    stock : 0,
+    isActive : false,
+    image : ''
+  });
   const [preview, setPreview] = useState(null);
-
-  useEffect(() => {
-    const prodDetailGetter = async () => {
-      try {
-        setLoading(true);
-        const res = await getProductDetails(id);
-        setProd(res?.data?.data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    prodDetailGetter();
-  }, [id]);
 
   function handleChange(e) {
     const { name, value, files } = e.target;
@@ -46,40 +34,13 @@ export default function AdminProductDetailPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     try{
-      await updateProduct(id, prod);
-      toast.success('Product Updated Successfully');
+        await createProduct(prod);
+        toast.success('Product Created Successfully');
+        navigate('/admin/products');
     }
     catch(err){
       console.log(err);
     }
-  }
-
-  async function handleDelete(e){
-    e.preventDefault();
-    try{
-      await deleteProduct(id);
-      toast.success('Product Deleted Successfully');
-      navigate('/admin/products');
-    }
-    catch(err){
-      console.log(err);
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center text-lg font-semibold">
-        Loading product...
-      </div>
-    );
-  }
-
-  if (!prod) {
-    return (
-      <div className="h-screen flex items-center justify-center text-lg">
-        Product does not exist.
-      </div>
-    );
   }
 
   return (
@@ -92,7 +53,7 @@ export default function AdminProductDetailPage() {
 
         {/* Header */}
         <h2 className="text-2xl font-semibold text-gray-700 text-center">
-          Edit Product
+          Create Product
         </h2>
 
         {/* GRID */}
@@ -104,7 +65,7 @@ export default function AdminProductDetailPage() {
             <input
               type="text"
               name="name"
-              value={prod.name}
+              value={prod?.name}
               onChange={handleChange}
               className="input"
               required
@@ -118,7 +79,7 @@ export default function AdminProductDetailPage() {
               type="number"
               name="price"
               min={0}
-              value={prod.price}
+              value={prod?.price}
               onChange={handleChange}
               className="input"
               required
@@ -130,7 +91,7 @@ export default function AdminProductDetailPage() {
             <label className="label">Category</label>
             <select
               name="category"
-              value={prod.category}
+              value={prod?.category}
               onChange={handleChange}
               className="input"
               required
@@ -150,7 +111,7 @@ export default function AdminProductDetailPage() {
               type="number"
               name="stock"
               min={0}
-              value={prod.stock}
+              value={prod?.stock}
               onChange={handleChange}
               className="input"
               required
@@ -162,7 +123,7 @@ export default function AdminProductDetailPage() {
             <label className="label">Status</label>
             <select
               name="isActive"
-              value={String(prod.isActive)}
+              value={String(prod?.isActive)}
               onChange={e =>
                 setProd(prev => ({
                   ...prev,
@@ -196,7 +157,7 @@ export default function AdminProductDetailPage() {
           <textarea
             name="description"
             rows={4}
-            value={prod.description}
+            value={prod?.description}
             onChange={handleChange}
             className="input resize-none"
             required
@@ -219,13 +180,7 @@ export default function AdminProductDetailPage() {
           type="submit"
           className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition"
         >
-          Save Changes
-        </button>
-        <button
-          type="button"
-          className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-medium transition" onClick={handleDelete}
-        >
-          Delete Product
+          Create Product
         </button>
 
       </form>
