@@ -159,3 +159,12 @@ module.exports.updateProduct = wrapAsync(async (req, res) => {
   });
 
 });
+
+module.exports.getTotalProductsNumber = wrapAsync(async (req, res)=>{
+  const totalProducts = await Product.estimatedDocumentCount();
+  res.status(StatusCodes.OK).json({
+    success : true,
+    message : "Total Products fetched",
+    data : totalProducts
+  })  
+})

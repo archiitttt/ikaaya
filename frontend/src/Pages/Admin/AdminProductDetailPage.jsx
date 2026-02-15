@@ -4,11 +4,17 @@ import { deleteProduct, updateProduct } from "../../Services/Admin/adminProductS
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import ButtonLoader from "../../Components/misc/ButtonLoader";
+import ConfirmModal from "../../Components/misc/ConfirmModal";
 
 export default function AdminProductDetailPage() {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [prod, setProd] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -48,29 +54,35 @@ export default function AdminProductDetailPage() {
   /* ---------------- UPDATE ---------------- */
   async function handleSubmit(e) {
     e.preventDefault();
+    if (saving) return;
+
     try {
+      setSaving(true);
       await updateProduct(id, prod);
       toast.success("Product Updated Successfully");
     } catch (err) {
-      console.log(err);
       toast.error("Failed to update product");
+    } finally {
+      setSaving(false);
     }
   }
 
+
   /* ---------------- DELETE ---------------- */
   async function handleDelete() {
-    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
-    if (!confirmDelete) return;
-
     try {
+      setDeleting(true);
       await deleteProduct(id);
       toast.success("Product Deleted Successfully");
       navigate("/admin/products");
     } catch (err) {
-      console.log(err);
       toast.error("Failed to delete product");
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
     }
   }
+
 
   /* ---------------- LOADING ---------------- */
   if (loading) {
@@ -235,24 +247,37 @@ export default function AdminProductDetailPage() {
         {/* ACTION BUTTONS */}
         <div className="sticky bottom-0 bg-white pt-4 flex flex-col sm:flex-row gap-3 border-t">
 
-          <button
-            type="submit"
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition"
-          >
-            Save Changes
-          </button>
+        <ButtonLoader
+          type="submit"
+          loading={saving}
+          className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition"
+        >
+          Save Changes
+        </ButtonLoader>
 
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-medium transition"
-          >
-            Delete Product
-          </button>
+        <ButtonLoader
+          type="button"
+          loading={deleting}
+          onClick={() => setShowDeleteModal(true)}
+          className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-medium transition"
+        >
+          Delete Product
+        </ButtonLoader>
 
         </div>
 
       </form>
+
+    <ConfirmModal
+      open={showDeleteModal}
+      onClose={() => setShowDeleteModal(false)}
+      onConfirm={handleDelete}
+      loading={deleting}
+      title="Delete Product"
+      message="This product will be permanently removed. This action cannot be undone."
+      confirmText="Delete"
+    />
+
 
     </AdminPageWrapper>
   );

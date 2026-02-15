@@ -8,10 +8,28 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import { useState, useEffect } from "react";
+import { getTotalProductsNumber } from "../../Services/Admin/adminProductService";
 
 export default function AdminDashboard() {
 
   const navigate = useNavigate();
+
+  const [products, setProducts] = useState(0);
+
+  useEffect(()=>{
+    const productGetter = async ()=>{
+      try{
+        const res = await getTotalProductsNumber();
+        setProducts(res?.data?.data);
+      }
+      catch(err){
+        toast.error(err);
+      }
+    }
+
+    productGetter();
+  },[products]);
 
   return (
     <AdminPageWrapper>
@@ -39,10 +57,10 @@ export default function AdminDashboard() {
 
         {/* STATS CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-5">
-          <StatCard title="Total Products" value="128" icon={<FiBox />} color="bg-blue-500" />
-          <StatCard title="Orders" value="542" icon={<FiShoppingCart />} color="bg-green-500" />
-          <StatCard title="Customers" value="1,204" icon={<FiUsers />} color="bg-purple-500" />
-          <StatCard title="Revenue" value="₹1,24,320" icon={<FiTrendingUp />} color="bg-orange-500" />
+          <StatCard title="Total Products" value={products} icon={<FiBox />} color="bg-blue-500" />
+          <StatCard title="Orders" value="0" icon={<FiShoppingCart />} color="bg-green-500" />
+          <StatCard title="Customers" value="10" icon={<FiUsers />} color="bg-purple-500" />
+          <StatCard title="Revenue" value="₹5000" icon={<FiTrendingUp />} color="bg-orange-500" />
         </div>
 
         {/* RECENT ACTIVITY */}

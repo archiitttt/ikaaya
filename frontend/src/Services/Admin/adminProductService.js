@@ -19,3 +19,7 @@ export const createProduct = (formData)=>{
         }
     })
 }
+
+export const getTotalProductsNumber = ()=>{
+    return api.get('/admin/products/number');
+}

@@ -3,10 +3,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import ButtonLoader from "../../Components/misc/ButtonLoader";
 
 export default function AdminCreateProductPage() {
 
   const navigate = useNavigate();
+
+  const [creating, setCreating] = useState(false);
 
   const [prod, setProd] = useState({
     name: "",
@@ -37,14 +40,17 @@ export default function AdminCreateProductPage() {
   /* ---------------- SUBMIT ---------------- */
   async function handleSubmit(e) {
     e.preventDefault();
+    if (creating) return;
 
     try {
+      setCreating(true);
       await createProduct(prod);
       toast.success("Product Created Successfully");
       navigate("/admin/products");
     } catch (err) {
-      console.log(err);
       toast.error("Failed to create product");
+    } finally {
+      setCreating(false);
     }
   }
 
@@ -196,12 +202,13 @@ export default function AdminCreateProductPage() {
 
         {/* SUBMIT BUTTON */}
         <div className="sticky bottom-0 bg-white pt-4 border-t">
-          <button
+          <ButtonLoader
             type="submit"
+            loading={creating}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition"
           >
             Create Product
-          </button>
+          </ButtonLoader>
         </div>
 
       </form>
