@@ -1,19 +1,20 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getProductDetails } from "../../Services/productService";
 import { deleteProduct, updateProduct } from "../../Services/Admin/adminProductService";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify"; 
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
 
 export default function AdminProductDetailPage() {
 
   const navigate = useNavigate();
-
   const { id } = useParams();
+
   const [prod, setProd] = useState(null);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
 
+  /* ---------------- FETCH PRODUCT ---------------- */
   useEffect(() => {
     const prodDetailGetter = async () => {
       try {
@@ -30,6 +31,7 @@ export default function AdminProductDetailPage() {
     prodDetailGetter();
   }, [id]);
 
+  /* ---------------- HANDLE CHANGE ---------------- */
   function handleChange(e) {
     const { name, value, files } = e.target;
 
@@ -43,62 +45,105 @@ export default function AdminProductDetailPage() {
     setProd(prev => ({ ...prev, [name]: value }));
   }
 
+  /* ---------------- UPDATE ---------------- */
   async function handleSubmit(e) {
     e.preventDefault();
-    try{
+    try {
       await updateProduct(id, prod);
-      toast.success('Product Updated Successfully');
-    }
-    catch(err){
+      toast.success("Product Updated Successfully");
+    } catch (err) {
       console.log(err);
+      toast.error("Failed to update product");
     }
   }
 
-  async function handleDelete(e){
-    e.preventDefault();
-    try{
+  /* ---------------- DELETE ---------------- */
+  async function handleDelete() {
+    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+    if (!confirmDelete) return;
+
+    try {
       await deleteProduct(id);
-      toast.success('Product Deleted Successfully');
-      navigate('/admin/products');
-    }
-    catch(err){
+      toast.success("Product Deleted Successfully");
+      navigate("/admin/products");
+    } catch (err) {
       console.log(err);
+      toast.error("Failed to delete product");
     }
   }
 
+  /* ---------------- LOADING ---------------- */
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center text-lg font-semibold">
-        Loading product...
-      </div>
+      <AdminPageWrapper>
+        <div className="min-h-[60vh] flex items-center justify-center text-lg font-semibold">
+          Loading product...
+        </div>
+      </AdminPageWrapper>
     );
   }
 
+  /* ---------------- NOT FOUND ---------------- */
   if (!prod) {
     return (
-      <div className="h-screen flex items-center justify-center text-lg">
-        Product does not exist.
-      </div>
+      <AdminPageWrapper>
+        <div className="min-h-[60vh] flex items-center justify-center text-lg">
+          Product does not exist.
+        </div>
+      </AdminPageWrapper>
     );
   }
 
+  /* ---------------- UI ---------------- */
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-6">
+    <AdminPageWrapper>
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-3xl bg-white rounded-xl shadow-lg p-8 space-y-6"
+        className="bg-white rounded-2xl shadow-lg p-5 sm:p-8 space-y-6"
       >
 
-        {/* Header */}
-        <h2 className="text-2xl font-semibold text-gray-700 text-center">
-          Edit Product
-        </h2>
+        {/* HEADER */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b pb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Edit Product
+          </h2>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/products")}
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            ← Back to products
+          </button>
+        </div>
 
-          {/* NAME */}
+        {/* IMAGE + UPLOAD */}
+        <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+          <img
+            src={preview || prod.image?.url}
+            alt="product"
+            className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-xl border"
+          />
+
+          <div className="flex-1 w-full">
+            <label className="label">Upload Image</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="input"
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Recommended: square image, under 1MB
+            </p>
+          </div>
+        </div>
+
+        {/* FORM GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
           <div>
             <label className="label">Name</label>
             <input
@@ -111,7 +156,6 @@ export default function AdminProductDetailPage() {
             />
           </div>
 
-          {/* PRICE */}
           <div>
             <label className="label">Price</label>
             <input
@@ -125,7 +169,6 @@ export default function AdminProductDetailPage() {
             />
           </div>
 
-          {/* CATEGORY */}
           <div>
             <label className="label">Category</label>
             <select
@@ -143,7 +186,6 @@ export default function AdminProductDetailPage() {
             </select>
           </div>
 
-          {/* STOCK */}
           <div>
             <label className="label">Stock</label>
             <input
@@ -157,7 +199,6 @@ export default function AdminProductDetailPage() {
             />
           </div>
 
-          {/* STATUS */}
           <div>
             <label className="label">Status</label>
             <select
@@ -176,18 +217,6 @@ export default function AdminProductDetailPage() {
             </select>
           </div>
 
-          {/* IMAGE */}
-          <div>
-            <label className="label">Upload Image</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleChange}
-              className="input"
-            />
-          </div>
-
         </div>
 
         {/* DESCRIPTION */}
@@ -203,32 +232,28 @@ export default function AdminProductDetailPage() {
           />
         </div>
 
-        {/* IMAGE PREVIEW */}
-        {preview && (
-          <div className="flex justify-center">
-            <img
-              src={preview}
-              alt="preview"
-              className="h-40 object-cover rounded-lg border"
-            />
-          </div>
-        )}
+        {/* ACTION BUTTONS */}
+        <div className="sticky bottom-0 bg-white pt-4 flex flex-col sm:flex-row gap-3 border-t">
 
-        {/* BUTTON */}
-        <button
-          type="submit"
-          className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition"
-        >
-          Save Changes
-        </button>
-        <button
-          type="button"
-          className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-medium transition" onClick={handleDelete}
-        >
-          Delete Product
-        </button>
+          <button
+            type="submit"
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition"
+          >
+            Save Changes
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-medium transition"
+          >
+            Delete Product
+          </button>
+
+        </div>
 
       </form>
-    </div>
+
+    </AdminPageWrapper>
   );
 }

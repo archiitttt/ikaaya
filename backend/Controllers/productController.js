@@ -139,6 +139,11 @@ module.exports.updateProduct = wrapAsync(async (req, res) => {
 
   
   if (req.file) {
+
+    if(product.image && product.image.public_id){
+        await deleteFromCloudinary(product.image.public_id);
+    }
+
     product.image = {
         url : req.file.url,
         public_id : req.file.public_id
