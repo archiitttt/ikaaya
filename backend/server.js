@@ -15,17 +15,13 @@ const PORT = process.env.PORT || 8080;
 app.use(express.urlencoded({extended : true}));
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.end.CLIENT_URL,
     credentials: true,
   }));
 app.use(cookieParser());
-
-app.get('/', (req, res)=>{
-    res.json({
-        hello:'world'
-    })
-})
-
+app.get("/", (req,res)=>{
+    res.send("API Running");
+});
 app.use('/auth', authRoute);
 app.use('/admin', adminRoute);
 app.use('/api/products', productRoute);

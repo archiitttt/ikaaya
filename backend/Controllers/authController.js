@@ -37,8 +37,8 @@ module.exports.signup = wrapAsync(async (req, res)=>{
 
     res.cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+        secure: true,
+        sameSite: "none",
         maxAge: 24 * 60 * 60 * 1000
     });
 
@@ -50,10 +50,6 @@ module.exports.signup = wrapAsync(async (req, res)=>{
 });
 
 module.exports.login = wrapAsync(async (req, res)=>{
-
-    if(req.cookies.token){
-        throw new ExpressError("Already logged in", StatusCodes.BAD_REQUEST);
-    }
 
     const {email, password} = req.body;
 
@@ -77,8 +73,8 @@ module.exports.login = wrapAsync(async (req, res)=>{
 
     res.cookie('token', token, {
         httpOnly : true,
-        secure : process.env.NODE_ENV==='production',
-        sameSite : process.env.NODE_ENV==='production' ? 'strict' : 'lax',
+        secure : true,
+        sameSite : "none",
         maxAge : 24 * 60 * 60 * 1000
     })
 
@@ -102,8 +98,8 @@ module.exports.logout = (req, res)=>{
 
     res.clearCookie('token', {
         httpOnly : true,
-        secure : process.env.NODE_ENV==='production',
-        sameSite : process.env.NODE_ENV==='production' ? 'strict' : 'lax'
+        secure : true,
+        sameSite : "none"
     })
 
     res.status(StatusCodes.OK).json({

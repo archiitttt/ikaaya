@@ -14,6 +14,8 @@ import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import AdminProductPage from "./Pages/Admin/AdminProductPage";
 import AdminCreateProduct from "./Pages/Admin/AdminCreateProduct";
 import AdminProductDetailPAge from "./Pages/Admin/AdminProductDetailPage";
+import AdminProtectedRoute from "./Components/admin/AdminProtectedRoute";
+import AdminLogin from "./Pages/Admin/AdminLogin";
 
 function App() {
   return (
@@ -36,11 +38,16 @@ function App() {
           }/>
       </Route>
 
-      <Route element={<AdminLayout/>}>
-          <Route path="/admin" element={<AdminDashboard/>}/>
-          <Route path="/admin/products" element={<AdminProductPage/>}/>
-          <Route path="/admin/products/:id" element={<AdminProductDetailPAge/>}/>
-          <Route path="/admin/products/create" element={<AdminCreateProduct/>}/>
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route element={<AdminProtectedRoute />}>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProductPage />} />
+          <Route path="products/create" element={<AdminCreateProduct />} />
+          <Route path="products/:id" element={<AdminProductDetailPAge />} />
+        </Route>
+
       </Route>
 
     </Routes>

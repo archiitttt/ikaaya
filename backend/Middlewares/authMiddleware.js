@@ -1,24 +1,40 @@
 const { StatusCodes } = require("http-status-codes");
 const { ExpressError } = require("../Utils/expressError");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-module.exports.isAuth = (req, res, next)=>{
+module.exports.isAuth = (req, res, next) => {
+  try {
     const token = req.cookies.token;
 
-    if(!token){
-        throw new ExpressError('Unauthorized', StatusCodes.UNAUTHORIZED);
+    if (!token) {
+      throw new ExpressError("Unauthorized", StatusCodes.UNAUTHORIZED);
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     req.user = decoded;
-
     next();
-}
 
-module.exports.isAdmin = (req, res, next)=>{
-    if(req.user.role !== 'admin'){
-        throw new ExpressError('Admin access required', StatusCodes.FORBIDDEN);
-    }
+  } catch (err) {
+    return next(
+      new ExpressError("Session expired. Please login again.", StatusCodes.UNAUTHORIZED)
+    );
+  }
+};
 
-    next();
-}
+module.exports.isAdmin = (req, res, next) => {
+
+  if (!req.user) {
+    return next(
+      new ExpressError("Unauthorized", StatusCodes.UNAUTHORIZED)
+    );
+  }
+
+  if (req.user.role !== "admin") {
+    return next(
+      new ExpressError("Admin access required", StatusCodes.FORBIDDEN)
+    );
+  }
+
+  next();
+};

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAuth } from "../Context/AuthContext";
 import PinkButton from "../Components/misc/PinkButton";
 import { logoutUser } from "../Services/authService";
@@ -9,16 +8,6 @@ export default function Profile(){
 
     const {user, setUser} = useAuth();
     const navigate = useNavigate();
-
-    // const getUser = async (user)=>{
-    //     try{
-    //         const res = await 
-    //     }
-    // }
-
-    // useEffect(()=>{
-        
-    // },[])
 
     const handleLogout = async ()=>{
         try{

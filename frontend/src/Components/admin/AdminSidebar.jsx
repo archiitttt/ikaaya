@@ -1,5 +1,9 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useRef } from "react";
+import { logoutUser } from "../../Services/authService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../Context/AuthContext";
 import {
   FiMenu,
   FiGrid,
@@ -9,6 +13,9 @@ import {
 } from "react-icons/fi";
 
 export default function AdminSidebar({ open, setOpen }) {
+
+  const {setUser} = useAuth();
+  const navigate = useNavigate();
 
   const sidebarRef = useRef(null);
 
@@ -29,6 +36,19 @@ export default function AdminSidebar({ open, setOpen }) {
     { name: "Dashboard", to: "/admin", icon: <FiGrid /> },
     { name: "Products", to: "/admin/products", icon: <FiBox /> },
   ];
+
+    const handleLogout = async ()=>{
+            try{
+                const res = await logoutUser();
+                setUser(null);
+                toast.success(res.data.message);
+                navigate("/admin/login", { replace: true });
+            }
+            catch(err){
+                console.log(err);
+                toast.error(err?.response?.data?.message);
+            }
+    }
 
   return (
     <aside
@@ -113,6 +133,7 @@ export default function AdminSidebar({ open, setOpen }) {
             flex items-center text-red-400 hover:bg-red-500/20 transition
             ${open ? "gap-3 px-3 py-2.5 rounded-lg w-full text-sm" : "justify-center w-10 h-10 rounded-lg"}
           `}
+          onClick={()=>{handleLogout()}}
         >
           <FiLogOut className="text-lg shrink-0" />
           {open && <span>Logout</span>}

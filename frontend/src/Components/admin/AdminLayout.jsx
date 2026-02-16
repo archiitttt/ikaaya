@@ -6,7 +6,6 @@ export default function AdminLayout() {
   const [open, setOpen] = useState(true);
   const location = useLocation();
 
-  // Close sidebar whenever route changes
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
