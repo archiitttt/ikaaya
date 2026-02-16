@@ -8,7 +8,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const {user} = useAuth();
 
-  const links = [{name : 'HOME', goesTo : '/'}, {name : 'SHOP', goesTo : '/shop'}, {name : 'ABOUT', goesTo : '/about'}, {name : 'CONTACT', goesTo : '/contact'}];
+  const links = [{name : 'HOME', goesTo : '/'}, {name : 'SHOP', goesTo : '/shop'}, {name : 'CONTACT', goesTo : '/contact'}];
 
   return (
     <nav className="relative w-full bg-white shadow-sm">

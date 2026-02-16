@@ -16,6 +16,7 @@ import AdminCreateProduct from "./Pages/Admin/AdminCreateProduct";
 import AdminProductDetailPAge from "./Pages/Admin/AdminProductDetailPage";
 import AdminProtectedRoute from "./Components/admin/AdminProtectedRoute";
 import AdminLogin from "./Pages/Admin/AdminLogin";
+import ContactPage from "./Pages/Contact";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/shop" element={<Shop/>}/>
+        <Route path="/contact" element={<ContactPage/>}/>
         <Route path="/shop/category/:category" element={<Shop/>}/>
         <Route path="/shop/:id" element={<ProductDetails/>}/>
         <Route path="/signup" element={<Signup />} />
