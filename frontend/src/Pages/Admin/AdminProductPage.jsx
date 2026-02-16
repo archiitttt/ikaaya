@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllProducts } from "../../Services/productService";
 import { useNavigate } from "react-router-dom";
-import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import AdminPageWrapper from "../../Components/admin/AdminPageWrapper";
 
 export default function AdminProductPage() {
   const [products, setProducts] = useState([]);
