@@ -2,7 +2,7 @@ import { createProduct } from "../../Services/Admin/adminProductService";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import AdminPageWrapper from "../../Components/admin/AdminPageWrapper";
 import ButtonLoader from "../../Components/misc/ButtonLoader";
 
 export default function AdminCreateProductPage() {
