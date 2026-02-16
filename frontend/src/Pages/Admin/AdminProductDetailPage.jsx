@@ -3,7 +3,7 @@ import { getProductDetails } from "../../Services/productService";
 import { deleteProduct, updateProduct } from "../../Services/Admin/adminProductService";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import AdminPageWrapper from "../../Components/admin/AdminPageWrapper";
 import ButtonLoader from "../../Components/misc/ButtonLoader";
 import ConfirmModal from "../../Components/misc/ConfirmModal";
 
