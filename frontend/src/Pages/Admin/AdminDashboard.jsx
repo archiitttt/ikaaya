@@ -7,7 +7,7 @@ import {
   FiBarChart2
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import AdminPageWrapper from "../../components/admin/AdminPageWrapper";
+import AdminPageWrapper from "../../Components/admin/AdminPageWrapper";
 import { useState, useEffect } from "react";
 import { getTotalProductsNumber } from "../../Services/Admin/adminProductService";
 import { toast } from "react-toastify";
