@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import AdminPageWrapper from "../../Components/admin/AdminPageWrapper";
 import ButtonLoader from "../../Components/misc/ButtonLoader";
 import ConfirmModal from "../../Components/misc/ConfirmModal";
+import { getAllCategories } from "../../Services/categoryService";
 
 export default function AdminProductDetailPage() {
 
@@ -17,12 +18,14 @@ export default function AdminProductDetailPage() {
   const [deleting, setDeleting] = useState(false);
 
   const [prod, setProd] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [preview, setPreview] = useState(null);
 
-  /* ---------------- FETCH PRODUCT ---------------- */
+  /* ---------------- FETCH PRODUCT & CATEGORIES ---------------- */
   useEffect(() => {
-    const prodDetailGetter = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         const res = await getProductDetails(id);
@@ -34,7 +37,20 @@ export default function AdminProductDetailPage() {
       }
     };
 
-    prodDetailGetter();
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        toast.error('Failed to load categories');
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchData();
+    fetchCategories();
   }, [id]);
 
   /* ---------------- HANDLE CHANGE ---------------- */
@@ -189,12 +205,16 @@ export default function AdminProductDetailPage() {
               onChange={handleChange}
               className="input"
               required
+              disabled={loadingCategories}
             >
-              <option value="bracelet">Bracelet</option>
-              <option value="necklace">Necklace</option>
-              <option value="keycharm">Keycharm</option>
-              <option value="ring">Ring</option>
-              <option value="earring">Earring</option>
+              <option value="" disabled>
+                {loadingCategories ? 'Loading categories...' : 'Select a category'}
+              </option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                </option>
+              ))}
             </select>
           </div>
 

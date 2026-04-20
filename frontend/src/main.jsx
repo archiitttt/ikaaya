@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import "./Icons/fontawesome";
 import './index.css'
+import './styles/imageOptimization.css'
 import {AuthProvider} from './Context/AuthContext.jsx'
 import App from './App.jsx'
 

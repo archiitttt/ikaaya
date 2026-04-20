@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getProductDetails } from "../Services/productService";
 import Loader from "../Components/common/Loader";
 import { toast } from "react-toastify";
+import { getProductImageUrl } from "../Utils/imageOptimization";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ export default function ProductDetails() {
         const res = await getProductDetails(id);
         const product = res.data.data;
         setProdData(product);
-        setActiveImage(product.image.url);
+        setActiveImage(getProductImageUrl(product.image.url));
       } catch (err) {
         console.error(err);
         toast.error("Unable to load this piece");
@@ -56,6 +57,7 @@ export default function ProductDetails() {
               <img
                 src={activeImage}
                 alt={prodData.name}
+                loading="eager"
                 className="w-full h-full object-cover"
               />
             </div>

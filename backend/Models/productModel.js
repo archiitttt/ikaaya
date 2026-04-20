@@ -22,8 +22,9 @@ const productSchema = new Schema(
     },
     category : {
         type : String,
-        enum : ["bracelet", "necklace", "keycharm", "ring", "earring"],
-        required : true
+        required : true,
+        lowercase: true,
+        trim: true
     },
     image: {
       url : {

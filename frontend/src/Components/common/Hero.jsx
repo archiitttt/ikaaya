@@ -13,6 +13,7 @@ export default function Hero() {
         min-h-[75vh] md:min-h-[85vh] lg:min-h-[90vh]
         bg-cover
         bg-[position:75%_center] md:bg-center
+        will-change-transform
       "
       style={{ backgroundImage: `url(${heroImg})` }}
     >

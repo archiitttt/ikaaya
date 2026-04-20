@@ -17,6 +17,8 @@ import AdminProductDetailPAge from "./Pages/Admin/AdminProductDetailPage";
 import AdminProtectedRoute from "./Components/admin/AdminProtectedRoute";
 import AdminLogin from "./Pages/Admin/AdminLogin";
 import ContactPage from "./Pages/Contact";
+import AdminCategoryPage from "./Pages/Admin/AdminCategoryPage";
+import AdminCreateCategoryPage from "./Pages/Admin/AdminCreateCategory";
 
 function App() {
   return (
@@ -48,6 +50,9 @@ function App() {
           <Route path="products" element={<AdminProductPage />} />
           <Route path="products/create" element={<AdminCreateProduct />} />
           <Route path="products/:id" element={<AdminProductDetailPAge />} />
+          <Route path="categories" element={<AdminCategoryPage />} />
+          <Route path="categories/create" element={<AdminCreateCategoryPage />} />
+          <Route path="categories/edit/:id" element={<AdminCreateCategoryPage />} />
         </Route>
 
       </Route>

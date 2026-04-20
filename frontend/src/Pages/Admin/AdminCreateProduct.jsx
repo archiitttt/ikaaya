@@ -1,20 +1,23 @@
 import { createProduct } from "../../Services/Admin/adminProductService";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import AdminPageWrapper from "../../Components/admin/AdminPageWrapper";
 import ButtonLoader from "../../Components/misc/ButtonLoader";
+import { getAllCategories } from "../../Services/categoryService";
 
 export default function AdminCreateProductPage() {
 
   const navigate = useNavigate();
 
   const [creating, setCreating] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const [prod, setProd] = useState({
     name: "",
     price: 0,
-    category: "bracelet",
+    category: "",
     description: "",
     stock: 0,
     isActive: false,
@@ -22,6 +25,27 @@ export default function AdminCreateProductPage() {
   });
 
   const [preview, setPreview] = useState(null);
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data);
+        // Set default category to the first available category
+        if (data.length > 0) {
+          setProd(prev => ({ ...prev, category: data[0].name }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        toast.error('Failed to load categories');
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   /* ---------------- HANDLE CHANGE ---------------- */
   function handleChange(e) {
@@ -145,12 +169,16 @@ export default function AdminCreateProductPage() {
               onChange={handleChange}
               className="input"
               required
+              disabled={loadingCategories}
             >
-              <option value="bracelet">Bracelet</option>
-              <option value="necklace">Necklace</option>
-              <option value="keycharm">Keycharm</option>
-              <option value="ring">Ring</option>
-              <option value="earring">Earring</option>
+              <option value="" disabled>
+                {loadingCategories ? 'Loading categories...' : 'Select a category'}
+              </option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                </option>
+              ))}
             </select>
           </div>
 

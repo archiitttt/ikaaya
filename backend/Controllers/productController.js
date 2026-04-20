@@ -1,4 +1,5 @@
 const Product = require('../Models/productModel');
+const Category = require('../Models/categoryModel');
 const { ExpressError } = require('../Utils/expressError');
 const { wrapAsync } = require('../Utils/wrapAsync');
 const { StatusCodes } = require('http-status-codes');
@@ -69,15 +70,16 @@ module.exports.showProductbyId = wrapAsync(async (req, res)=>{
 module.exports.showProductsByCategory = wrapAsync(async (req, res)=>{
     const {category} = req.params;
 
-    const allowedCategories = Product.schema.path("category").enumValues;
+    // Check if category exists in database
+    const categoryExists = await Category.findOne({ name: category.toLowerCase() });
 
-    if(!allowedCategories.includes(category)){
+    if(!categoryExists){
         throw new ExpressError('This category does not exist!', StatusCodes.BAD_REQUEST);
     }
 
-    const products = await Product.find({category : category});
+    const products = await Product.find({category : category.toLowerCase()});
 
-    if(!products){
+    if(!products || products.length === 0){
         throw new ExpressError('Could not fetch products under this category!', StatusCodes.NOT_FOUND);
     }
 

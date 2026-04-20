@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { getCardImageUrl } from "../../Utils/imageOptimization";
 
 export default function ProductCard({
   prodKey,
@@ -10,6 +11,7 @@ export default function ProductCard({
 }) {
 
   const navigate = useNavigate();
+  const optimizedImageUrl = getCardImageUrl(image?.url);
 
   return (
     <div
@@ -37,10 +39,12 @@ export default function ProductCard({
       )}
 
       {/* Image */}
-      <div className="w-full h-36 sm:h-40 md:h-44 lg:h-48 overflow-hidden">
-        <div
-          className="w-full h-full bg-cover bg-center transition-transform duration-500 hover:scale-110"
-          style={{ backgroundImage: `url(${image.url})` }}
+      <div className="w-full h-36 sm:h-40 md:h-44 lg:h-48 overflow-hidden bg-gray-100">
+        <img
+          src={optimizedImageUrl}
+          alt={product}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
         />
       </div>
 

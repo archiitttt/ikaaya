@@ -7,6 +7,11 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "ikaaya_products",
     allowed_formats: ["jpg", "png", "jpeg", "webp"],
+    quality: "auto", // Auto quality optimization
+    eager: [
+      { width: 500, height: 500, crop: "fill", quality: "auto" },
+      { width: 1000, height: 1000, crop: "fill", quality: "auto" }
+    ]
   },
 });
 

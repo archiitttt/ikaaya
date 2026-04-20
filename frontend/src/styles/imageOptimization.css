@@ -1,0 +1,47 @@
+/**
+ * Global image optimization styles
+ * Improves performance and visual quality of images
+ */
+
+/* Optimize all images */
+img {
+  display: block;
+  image-rendering: crisp-edges;
+}
+
+/* Lazy loaded images transition smoothly */
+img[loading="lazy"] {
+  background-color: #f0f0f0;
+  transition: opacity 0.3s ease-in;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+/* Background images with better performance */
+[style*="backgroundImage"] {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Optimize background images for mobile */
+@media (prefers-reduced-motion: reduce) {
+  [style*="backgroundImage"] {
+    background-attachment: scroll;
+  }
+}
+
+/* Image containers for aspect ratio preservation */
+.image-container {
+  display: block;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

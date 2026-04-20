@@ -10,6 +10,7 @@ import {
   FiBox,
   FiLogOut,
   FiChevronLeft,
+  FiTag,
 } from "react-icons/fi";
 
 export default function AdminSidebar({ open, setOpen }) {
@@ -33,9 +34,10 @@ export default function AdminSidebar({ open, setOpen }) {
   }, [open, setOpen]);
 
   const links = [
-    { name: "Dashboard", to: "/admin", icon: <FiGrid /> },
-    { name: "Products", to: "/admin/products", icon: <FiBox /> },
-  ];
+  { name: "Dashboard", to: "/admin", icon: <FiGrid /> },
+  { name: "Products", to: "/admin/products", icon: <FiBox /> },
+  { name: "Categories", to: "/admin/categories", icon: <FiTag /> },  // ADD THIS
+];
 
     const handleLogout = async ()=>{
             try{
