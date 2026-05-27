@@ -7,7 +7,7 @@ router.route('/')
 .get(showAllProducts);
 
 router.route('/category/:category')
-.get(showProductsByCategory)
+.get(showProductsByCategory);
 
 router.route('/:id')
 .get(showProductbyId)

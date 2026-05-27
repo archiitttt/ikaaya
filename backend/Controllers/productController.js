@@ -70,13 +70,6 @@ module.exports.showProductbyId = wrapAsync(async (req, res)=>{
 module.exports.showProductsByCategory = wrapAsync(async (req, res)=>{
     const {category} = req.params;
 
-    // Check if category exists in database
-    const categoryExists = await Category.findOne({ name: category.toLowerCase() });
-
-    if(!categoryExists){
-        throw new ExpressError('This category does not exist!', StatusCodes.BAD_REQUEST);
-    }
-
     const products = await Product.find({category : category.toLowerCase()});
 
     if(!products || products.length === 0){
