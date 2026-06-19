@@ -1,11 +1,10 @@
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
 const { ExpressError } = require('../Utils/expressError');
-const { wrapAsync } = require('../Utils/wrapAsync');
 const { StatusCodes } = require('http-status-codes');
 
 // Get all categories
-module.exports.getAllCategories = wrapAsync(async (req, res) => {
+module.exports.getAllCategories = async (req, res) => {
   const categories = await Category.find({});
 
   res.status(StatusCodes.OK).json({
@@ -13,10 +12,10 @@ module.exports.getAllCategories = wrapAsync(async (req, res) => {
     success: true,
     data: categories
   });
-});
+};
 
 // Get single category by ID
-module.exports.getCategoryById = wrapAsync(async (req, res) => {
+module.exports.getCategoryById = async (req, res) => {
   const { id } = req.params;
 
   const category = await Category.findById(id);
@@ -30,10 +29,10 @@ module.exports.getCategoryById = wrapAsync(async (req, res) => {
     success: true,
     data: category
   });
-});
+};
 
 // Create category (Admin only)
-module.exports.createCategory = wrapAsync(async (req, res) => {
+module.exports.createCategory = async (req, res) => {
   const { name, description } = req.body;
 
   if (!name || name.trim().length === 0) {
@@ -57,10 +56,10 @@ module.exports.createCategory = wrapAsync(async (req, res) => {
     success: true,
     data: savedCategory
   });
-});
+};
 
 // Update category (Admin only)
-module.exports.updateCategory = wrapAsync(async (req, res) => {
+module.exports.updateCategory = async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
 
@@ -90,10 +89,10 @@ module.exports.updateCategory = wrapAsync(async (req, res) => {
     success: true,
     data: updatedCategory
   });
-});
+};
 
 // Delete category (Admin only)
-module.exports.deleteCategory = wrapAsync(async (req, res) => {
+module.exports.deleteCategory = async (req, res) => {
   const { id } = req.params;
 
   const category = await Category.findById(id);
@@ -118,4 +117,4 @@ module.exports.deleteCategory = wrapAsync(async (req, res) => {
     message: 'Category deleted successfully',
     success: true
   });
-});
+};

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProductDetails } from "../Services/productService";
 import Loader from "../Components/common/Loader";
+import AddToCartModal from "../Components/product/AddToCartModal";
 import { toast } from "react-toastify";
 import { getProductImageUrl } from "../Utils/imageOptimization";
 
@@ -11,6 +12,7 @@ export default function ProductDetails() {
   const [prodData, setProdData] = useState(null);
   const [activeImage, setActiveImage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showAddToCartModal, setShowAddToCartModal] = useState(false);
 
   useEffect(() => {
     const prodDataGetter = async () => {
@@ -94,6 +96,16 @@ export default function ProductDetails() {
               </p>
             )}
 
+            {/* Add to Cart Button */}
+            {prodData.isActive && prodData.stock > 0 && (
+              <button
+                onClick={() => setShowAddToCartModal(true)}
+                className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition w-full sm:w-auto"
+              >
+                Add to Cart
+              </button>
+            )}
+
             {/* Brand Note */}
             <p className="text-xs text-gray-400 pt-8 max-w-md leading-relaxed">
               Every Ikaaya creation is thoughtfully handcrafted, celebrating
@@ -103,6 +115,14 @@ export default function ProductDetails() {
         </div>
         </>
       )}
+
+      {/* Add to Cart Modal */}
+      <AddToCartModal
+        isOpen={showAddToCartModal}
+        product={prodData}
+        onClose={() => setShowAddToCartModal(false)}
+        onSuccess={() => {}}
+      />
     </section>
   );
 }

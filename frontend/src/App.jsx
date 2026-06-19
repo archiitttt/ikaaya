@@ -6,6 +6,8 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import ProtectedRoute from "./Components/common/ProtectedRoute";
 import Profile from "./Pages/Profile";
+import Cart from "./Pages/Cart";
+import Checkout from "./Pages/Checkout";
 import Shop from "./Pages/Shop";
 import ProductDetails from "./Pages/ProductDetails";
 
@@ -33,6 +35,20 @@ function App() {
         <Route path="/shop/category/:category" element={<Shop/>}/>
         <Route path="/shop/:id" element={<ProductDetails/>}/>
         <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }/>
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }/>
         <Route
           path="/profile"
           element={

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../Context/AuthContext';
+import CartSidebar from './CartSidebar';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
@@ -57,7 +58,8 @@ export default function Navbar() {
         </div>}
 
         {/* Auth – Desktop AUTH-ed*/}
-        {user && <div className="hidden md:flex absolute right-6 gap-8">
+        {user && <div className="hidden md:flex absolute right-6 gap-8 items-center">
+          <CartSidebar />
           <Link
             to="/profile"
             className="text-xl font-medium tracking-wide hover:text-pink-400 transition"
@@ -104,6 +106,12 @@ export default function Navbar() {
 
             {/* Mobile Auth Links - AUTH-ed*/}
             {user && <div className="pt-4 border-t flex flex-col gap-4">
+              <Link
+                to="/cart"
+                className="text-sm font-medium tracking-wide hover:text-pink-400 transition"
+              >
+                CART
+              </Link>
               <Link
                 to="/profile"
                 className="text-sm font-medium tracking-wide hover:text-pink-400 transition"

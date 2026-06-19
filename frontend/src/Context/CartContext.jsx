@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
-import api from "../api/axios";
+import cartService from "../Services/cartService";
 import { useNavigate } from "react-router-dom";
 
 const CartContext = createContext(null);
@@ -11,6 +11,7 @@ export const CartProvider = ({ children }) => {
 
   const [cart, setCart] = useState([]);
   const [cartLoading, setCartLoading] = useState(false);
+  const [cartError, setCartError] = useState(null);
 
   useEffect(() => {
     if (!loadBuffer && isAuthenticated) {
@@ -19,16 +20,19 @@ export const CartProvider = ({ children }) => {
 
     if (!loadBuffer && !isAuthenticated) {
       setCart([]);
+      setCartError(null);
     }
   }, [isAuthenticated, loadBuffer]);
 
   const loadCart = async () => {
     try {
       setCartLoading(true);
-      const res = await api.get("/cart");
-      setCart(res.data.items || []);
+      setCartError(null);
+      const cartData = await cartService.getCart();
+      setCart(cartData.items || []);
     } catch (err) {
       console.error("Failed to load cart", err);
+      setCartError("Failed to load cart");
     } finally {
       setCartLoading(false);
     }
@@ -45,23 +49,15 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (productId, quantity = 1) => {
     if (!ensureAuth()) return;
 
-    setCart(prev => {
-      const existing = prev.find(i => i.productId === productId);
-      if (existing) {
-        return prev.map(i =>
-          i.productId === productId
-            ? { ...i, quantity: i.quantity + quantity }
-            : i
-        );
-      }
-      return [...prev, { productId, quantity }];
-    });
-
     try {
-      await api.post("/cart/add", { productId, quantity });
+      setCartError(null);
+      const updatedCart = await cartService.addToCart(productId, quantity);
+      setCart(updatedCart.items || []);
+      return updatedCart;
     } catch (err) {
-      console.error("Add to cart failed, reloading cart");
-      loadCart();
+      console.error("Add to cart failed:", err);
+      setCartError(err.response?.data?.message || "Failed to add item to cart");
+      throw err;
     }
   };
 
@@ -69,37 +65,45 @@ export const CartProvider = ({ children }) => {
     if (!ensureAuth()) return;
     if (quantity < 1) return;
 
-    setCart(prev =>
-      prev.map(i =>
-        i.productId === productId ? { ...i, quantity } : i
-      )
-    );
-
     try {
-      await api.put("/cart/update", { productId, quantity });
-    } catch {
-      loadCart();
+      setCartError(null);
+      const updatedCart = await cartService.updateQuantity(productId, quantity);
+      setCart(updatedCart.items || []);
+      return updatedCart;
+    } catch (err) {
+      console.error("Update quantity failed:", err);
+      setCartError(err.response?.data?.message || "Failed to update quantity");
+      await loadCart(); // Reload cart on error
+      throw err;
     }
   };
 
   const removeFromCart = async (productId) => {
     if (!ensureAuth()) return;
 
-    const prevCart = cart;
-    setCart(prev => prev.filter(i => i.productId !== productId));
-
     try {
-      await api.delete(`/cart/remove/${productId}`);
-    } catch {
-      setCart(prevCart);
+      setCartError(null);
+      const updatedCart = await cartService.removeFromCart(productId);
+      setCart(updatedCart.items || []);
+      return updatedCart;
+    } catch (err) {
+      console.error("Remove from cart failed:", err);
+      setCartError(err.response?.data?.message || "Failed to remove item");
+      await loadCart(); // Reload cart on error
+      throw err;
     }
   };
 
   const clearCart = async () => {
-    setCart([]);
     try {
-      await api.delete("/cart/clear");
-    } catch {
+      setCartError(null);
+      const updatedCart = await cartService.clearCart();
+      setCart(updatedCart.items || []);
+      return updatedCart;
+    } catch (err) {
+      console.error("Clear cart failed:", err);
+      setCartError(err.response?.data?.message || "Failed to clear cart");
+      throw err;
     }
   };
 
@@ -110,6 +114,7 @@ export const CartProvider = ({ children }) => {
       value={{
         cart,
         cartLoading,
+        cartError,
         totalItems,
         addToCart,
         updateQuantity,

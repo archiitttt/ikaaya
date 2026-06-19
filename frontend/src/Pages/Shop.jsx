@@ -66,6 +66,7 @@ export default function Shop() {
               description={product.description}
               price={product.price}
               isActive={product.isActive}
+              productData={product}
             />
           ))}
         </div>
