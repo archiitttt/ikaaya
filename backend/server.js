@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const cors = require('cors');
-require('./Config/db');
+const dbReady = require('./Config/db');
 const errorHandler = require('./Middlewares/errorHandler');
 const authRoute = require('./Routes/auth/authRoute');
 const adminRoute = require('./Routes/admin/admin');
 const productRoute = require('./Routes/api/productRoute');
 const orderRoute = require('./Routes/api/orderRoute');
 const userRoute = require('./Routes/api/userRoute');
+const cartRoute = require('./Routes/api/cartRoute');
 const categoryRoute = require('./Routes/admin/categoryRoute');
 const cookieParser = require('cookie-parser');
 const Category = require('./Models/categoryModel');
@@ -16,9 +17,10 @@ const { DEFAULT_CATEGORIES } = require('./Utils/categoryConstants');
 
 const PORT = process.env.PORT || 8080;
 
-// Initialize default categories
+// Initialize default categories after DB is connected
 const initializeCategories = async () => {
   try {
+    await dbReady;
     const categoriesCount = await Category.countDocuments();
     
     // Only seed categories if the collection is empty
@@ -50,6 +52,7 @@ app.use('/api/categories', categoryRoute);
 app.use('/api/products', productRoute);
 app.use('/api/orders', orderRoute);
 app.use('/api/users', userRoute);
+app.use('/api/cart', cartRoute);
 
 
 app.use(errorHandler);

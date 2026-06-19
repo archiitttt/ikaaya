@@ -31,12 +31,29 @@ const userSchema = new Schema(
       enum: ['user', 'admin'],
       default: 'user'
     },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    otp: {
+      type: String,
+      select: false
+    },
+    otpExpires: {
+      type: Date,
+      select: false
+    },
     orders : [
       {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'Order'
       }
-    ]
+    ],
+    cart: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cart',
+      default: null
+    }
   },
   { timestamps: true }
 );

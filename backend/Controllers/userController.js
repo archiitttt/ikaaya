@@ -1,10 +1,9 @@
 const { ExpressError } = require('../Utils/expressError');
-const { wrapAsync } = require('../Utils/wrapAsync');
 const { StatusCodes } = require('http-status-codes');
 const mongoose = require('mongoose');
 const User = require('../Models/userModel');
 
-module.exports.getUserInfo = wrapAsync(async (req, res)=>{
+module.exports.getUserInfo = async (req, res)=>{
     const userID = req.user.id;
 
     const data = await User.findById(userID);
@@ -18,4 +17,4 @@ module.exports.getUserInfo = wrapAsync(async (req, res)=>{
         message : 'User data fetched successfully',
         data : data
     })
-})
+};

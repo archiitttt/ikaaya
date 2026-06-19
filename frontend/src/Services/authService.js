@@ -11,3 +11,7 @@ export const loginUser = (data) =>{
 export const logoutUser = ()=>{
     return api.post('/auth/logout', {}, {withCredentials: true});
 }
+
+export const verifyOTPUser = (data) => {
+    return api.post('/auth/verify-otp', data, { withCredentials: true });
+}

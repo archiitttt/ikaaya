@@ -1,10 +1,11 @@
 const Order = require('../Models/orderModel');
 const Product = require('../Models/productModel');
 const User = require('../Models/userModel');
-const { wrapAsync } = require('../Utils/wrapAsync');
+const Cart = require('../Models/cartModel');
 const { ExpressError } = require('../Utils/expressError');
 const { StatusCodes } = require('http-status-codes');
 const mongoose = require('mongoose');
+const { sendOrderEmail, sendCustomerConfirmationEmail } = require('../Utils/emailService');
 
 const normalizeItems = (items) => {
     const map = new Map();
@@ -25,7 +26,7 @@ const normalizeItems = (items) => {
     return Array.from(map.values());
 };
 
-module.exports.createOrder = wrapAsync(async (req, res) => {
+module.exports.createOrder = async (req, res) => {
     const userID = req.user.id;
     const { items, address, paymentMethod } = req.body;
 
@@ -104,11 +105,21 @@ module.exports.createOrder = wrapAsync(async (req, res) => {
         await session.commitTransaction();
         await User.findByIdAndUpdate(userID, {$set : {orders : finalRes._id}})
 
+        // Clear the user's cart after successful order
+        await Cart.findOneAndUpdate({ userId: userID }, { items: [], totalPrice: 0 });
+
         res.status(StatusCodes.CREATED).json({
             message: 'Order created successfully',
             success: true,
             data: order
         });
+
+        // Send emails asynchronously (don't await — don't block the response)
+        const customer = await User.findById(userID);
+        if (customer) {
+          sendOrderEmail(order, customer);
+          sendCustomerConfirmationEmail(order, customer);
+        }
     } catch (err) {
         if (session) await session.abortTransaction();
 
@@ -121,9 +132,9 @@ module.exports.createOrder = wrapAsync(async (req, res) => {
     } finally {
         if (session) session.endSession();
     }
-});
+};
 
-module.exports.showUserOrders = wrapAsync(async (req, res)=>{
+module.exports.showUserOrders = async (req, res)=>{
     const userID = req.user.id;
 
     if(!mongoose.Types.ObjectId.isValid(userID)){
@@ -137,9 +148,9 @@ module.exports.showUserOrders = wrapAsync(async (req, res)=>{
         success : true,
         data : orders
     })
-});
+};
 
-module.exports.getOrderbyId = wrapAsync(async (req, res)=>{
+module.exports.getOrderbyId = async (req, res)=>{
 
     const {id} = req.params;
 
@@ -162,9 +173,9 @@ module.exports.getOrderbyId = wrapAsync(async (req, res)=>{
         success : true,
         data : order
     })
-});
+};
 
-module.exports.updateOrderStatus = wrapAsync(async (req, res)=>{
+module.exports.updateOrderStatus = async (req, res)=>{
     const {id} = req.params;
     const {paymentStatus, orderStatus} = req.body;
 
@@ -187,4 +198,4 @@ module.exports.updateOrderStatus = wrapAsync(async (req, res)=>{
         success : true,
         data : order
     })
-});
+};

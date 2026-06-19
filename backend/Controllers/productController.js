@@ -1,12 +1,11 @@
 const Product = require('../Models/productModel');
 const Category = require('../Models/categoryModel');
 const { ExpressError } = require('../Utils/expressError');
-const { wrapAsync } = require('../Utils/wrapAsync');
 const { StatusCodes } = require('http-status-codes');
 const mongoose = require('mongoose');
 const { deleteFromCloudinary } = require('../Utils/cloudinaryDelete');
 
-module.exports.createProduct = wrapAsync(async (req, res)=>{
+module.exports.createProduct = async (req, res)=>{
     const {name, description, price, category, stock} = req.body;
 
     const existingProduct = await Product.findOne({name});
@@ -28,9 +27,9 @@ module.exports.createProduct = wrapAsync(async (req, res)=>{
         success : true,
         data : savedProduct
     })
-});
+};
 
-module.exports.showAllProducts = wrapAsync(async (req, res)=>{
+module.exports.showAllProducts = async (req, res)=>{
     const products = await Product.find({});
 
     if(!products){
@@ -42,9 +41,9 @@ module.exports.showAllProducts = wrapAsync(async (req, res)=>{
         success : true,
         data : products
     })
-});
+};
 
-module.exports.showProductbyId = wrapAsync(async (req, res)=>{
+module.exports.showProductbyId = async (req, res)=>{
     const {id} = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -65,9 +64,9 @@ module.exports.showProductbyId = wrapAsync(async (req, res)=>{
         success : true,
         data : product
     })
-});
+};
 
-module.exports.showProductsByCategory = wrapAsync(async (req, res)=>{
+module.exports.showProductsByCategory = async (req, res)=>{
     const {category} = req.params;
 
     const products = await Product.find({category : category.toLowerCase()});
@@ -81,9 +80,9 @@ module.exports.showProductsByCategory = wrapAsync(async (req, res)=>{
         message : 'Products fetched successfully!',
         data : products
     })
-})
+};
 
-module.exports.destroyProduct = wrapAsync(async (req, res) => {
+module.exports.destroyProduct = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -109,9 +108,9 @@ module.exports.destroyProduct = wrapAsync(async (req, res) => {
         message: 'Product deleted successfully',
         success: true
     });
-});
+};
 
-module.exports.updateProduct = wrapAsync(async (req, res) => {
+module.exports.updateProduct = async (req, res) => {
 
   const { id } = req.params;
   const { name, description, price, category, stock, isActive } = req.body;
@@ -153,13 +152,13 @@ module.exports.updateProduct = wrapAsync(async (req, res) => {
     data: product
   });
 
-});
+};
 
-module.exports.getTotalProductsNumber = wrapAsync(async (req, res)=>{
+module.exports.getTotalProductsNumber = async (req, res)=>{
   const totalProducts = await Product.estimatedDocumentCount();
   res.status(StatusCodes.OK).json({
     success : true,
     message : "Total Products fetched",
     data : totalProducts
   })  
-})
+};

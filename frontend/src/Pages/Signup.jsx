@@ -17,6 +17,9 @@ export default function Signup() {
     password: "",
   });
 
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
@@ -29,22 +32,23 @@ export default function Signup() {
 
     try {
       setLoading(true);
-      const res = await signupUser(formData);
-      await checkAuth();
-      toast.success(res.data.message);
-      navigate("/");
+      if (!isOtpSent) {
+        const res = await signupUser(formData);
+        setSignupEmail(formData.email);
+        setIsOtpSent(true);
+        toast.success(res.data.message || "OTP sent to your email!");
+      } else {
+        const { verifyOTPUser } = await import("../Services/authService.js");
+        const res = await verifyOTPUser({ email: signupEmail, otp });
+        await checkAuth();
+        toast.success(res.data.message);
+        navigate("/");
+      }
     } catch (err) {
-      toast.error(err.response.data.message);
-    } finally{
-        setLoading(false);
+      toast.error(err.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
-
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      password: "",
-    });
   }
 
   return (
@@ -54,10 +58,12 @@ export default function Signup() {
         {/* Heading */}
         <div className="text-center">
           <h1 className="text-2xl sm:text-3xl font-heading text-pink-600 font-bold">
-            Create Account
+            {isOtpSent ? "Verify Email" : "Create Account"}
           </h1>
           <p className="mt-3 text-gray-500 text-sm sm:text-base">
-            Join ikaaya to explore the world of beaded jewelry made with love
+            {isOtpSent 
+              ? "Check your inbox for the verification code" 
+              : "Join ikaaya to explore the world of beaded jewelry made with love"}
           </p>
         </div>
 
@@ -65,51 +71,76 @@ export default function Signup() {
 
         {/* Form */}
         <form className="flex flex-col gap-6 w-full" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            minLength={1}
-          />
+          {!isOtpSent ? (
+            <>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                minLength={1}
+              />
 
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Phone"
-            className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
-            value={formData.phone}
-            onChange={handleChange}
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={10}
-            required
-          />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone"
+                className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
+                value={formData.phone}
+                onChange={handleChange}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={10}
+                required
+              />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email (only @gmail.com allowed)"
+                className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
+                value={formData.email}
+                onChange={handleChange}
+                pattern=".*@gmail\.com$"
+                title="Please enter a valid @gmail.com address"
+                required
+              />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
-            value={formData.password}
-            onChange={handleChange}
-            required minLength={6}
-          />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="p-3 sm:p-4 px-5 sm:px-6 rounded-full text-sm sm:text-base focus:outline-none"
+                value={formData.password}
+                onChange={handleChange}
+                required minLength={6}
+              />
+            </>
+          ) : (
+            <>
+              <p className="text-gray-600 text-center text-sm mb-2">
+                We've sent a 6-digit OTP to <strong>{signupEmail}</strong>.
+              </p>
+              <input
+                type="text"
+                name="otp"
+                placeholder="Enter 6-digit OTP"
+                className="p-4 px-6 rounded-full text-lg focus:outline-none text-center tracking-[0.5em] font-mono border border-pink-200"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                maxLength={6}
+                required
+              />
+            </>
+          )}
 
-          <PinkButton content={loading ? "Signing up..." : "Signup"} disabled={loading} />
+          <PinkButton 
+            content={loading ? "Please wait..." : (isOtpSent ? "Verify & Login" : "Signup")} 
+            disabled={loading} 
+          />
         </form>
 
         {/* Footer text */}
